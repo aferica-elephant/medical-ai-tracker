@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/medical_ai_tracker?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai
+    username: root
+    password: sdy10010
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+      encoding: UTF-8
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+deepseek:
+  api-url: https://ark.cn-beijing.volces.com/api/v3/responses
+  api-key: 04ac97b3-51c1-4060-ba15-f8cd6ae25b5b
+  model: doubao-seed-1-6-250615
+  web-search-enabled: true
+
+search:
+  cron: "0 0 2 ? * MON"
+
+serper:
+  api-url: https://google.serper.dev/search
+  api-key: f417df99afefcd2e3693ef92eeee3c6a0a12bcf5
