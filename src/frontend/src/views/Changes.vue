@@ -43,8 +43,8 @@ const changeTypeTag = (type) => {
 const loadChanges = async () => {
   try {
     const { data } = await api.getChanges({ page: page.value, size: 20 })
-    changes.value = data
-    total.value = data.length
+    changes.value = data.records
+    total.value = data.total
   } catch (e) {
     console.error('Failed to load changes', e)
   }

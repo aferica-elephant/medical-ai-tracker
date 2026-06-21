@@ -1,5 +1,6 @@
 package com.tracker.controller;
 
+import com.tracker.dto.PageResult;
 import com.tracker.dto.SearchTaskDTO;
 import com.tracker.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,10 @@ public class SearchController {
      *
      * @param page 页码，默认1
      * @param size 每页条数，默认20
-     * @return 搜索任务DTO列表
+     * @return 分页结果，包含搜索任务DTO列表和总条数
      */
     @GetMapping("/tasks")
-    public List<SearchTaskDTO> getTasks(
+    public PageResult<SearchTaskDTO> getTasks(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size) {
         return searchService.getSearchTasks(page, size);

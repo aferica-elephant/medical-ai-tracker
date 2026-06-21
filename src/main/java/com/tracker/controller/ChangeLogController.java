@@ -2,6 +2,7 @@ package com.tracker.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tracker.dto.PageResult;
 import com.tracker.entity.AgentChangeLog;
 import com.tracker.mapper.AgentChangeLogMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +34,16 @@ public class ChangeLogController {
      *
      * @param page 页码，默认1
      * @param size 每页条数，默认20
-     * @return 变更日志列表
+     * @return 分页结果，包含记录列表和总条数
      */
     @GetMapping
-    public List<AgentChangeLog> list(
+    public PageResult<AgentChangeLog> list(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size) {
         Page<AgentChangeLog> pageParam = new Page<>(page, size);
-        return changeLogMapper.selectPage(pageParam,
+        Page<AgentChangeLog> result = changeLogMapper.selectPage(pageParam,
                 new LambdaQueryWrapper<AgentChangeLog>()
-                        .orderByDesc(AgentChangeLog::getCreatedAt))
-                .getRecords();
+                        .orderByDesc(AgentChangeLog::getCreatedAt));
+        return PageResult.of(result.getRecords(), result.getTotal(), page, size);
     }
 }

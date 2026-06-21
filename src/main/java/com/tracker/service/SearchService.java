@@ -3,6 +3,7 @@ package com.tracker.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tracker.config.DeepSeekConfig;
+import com.tracker.dto.PageResult;
 import com.tracker.dto.SearchTaskDTO;
 import com.tracker.entity.MedicalAiAgent;
 import com.tracker.entity.SearchKeywordConfig;
@@ -220,13 +221,14 @@ public class SearchService {
      *
      * @param page 页码（从1开始）
      * @param size 每页条数
-     * @return 搜索任务DTO列表，按创建时间倒序排列
+     * @return 分页结果，包含搜索任务DTO列表和总条数，按创建时间倒序排列
      */
-    public List<SearchTaskDTO> getSearchTasks(int page, int size) {
+    public PageResult<SearchTaskDTO> getSearchTasks(int page, int size) {
         Page<SearchTask> pageParam = new Page<>(page, size);
         Page<SearchTask> result = searchTaskMapper.selectPage(pageParam,
                 new LambdaQueryWrapper<SearchTask>().orderByDesc(SearchTask::getCreatedAt));
-        return result.getRecords().stream().map(this::toTaskDTO).collect(Collectors.toList());
+        List<SearchTaskDTO> dtoList = result.getRecords().stream().map(this::toTaskDTO).collect(Collectors.toList());
+        return PageResult.of(dtoList, result.getTotal(), page, size);
     }
 
     /**

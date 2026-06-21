@@ -70,7 +70,7 @@ const triggerSearch = async () => {
 const loadTasks = async () => {
   try {
     const { data } = await api.getSearchTasks({ page: 1, size: 50 })
-    tasks.value = data
+    tasks.value = data.records
   } catch (e) {
     console.error('Failed to load tasks', e)
   }
