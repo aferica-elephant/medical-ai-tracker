@@ -20,15 +20,22 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-deepseek:
-  api-url: https://ark.cn-beijing.volces.com/api/v3/responses
-  api-key: 04ac97b3-51c1-4060-ba15-f8cd6ae25b5b
-  model: doubao-seed-1-6-250615
-  web-search-enabled: true
+# AgentScope 智能体框架配置（OpenAI 兼容格式，对接火山引擎 Ark API）
+agentscope:
+  model:
+    provider: openai
+  openai:
+    enabled: true
+    api-key: 04ac97b3-51c1-4060-ba15-f8cd6ae25b5b
+    model-name: deepseek-v4-flash-260425
+    base-url: https://ark.cn-beijing.volces.com/api/v3
+    stream: false
+  dashscope:
+    enabled: false
+  gemini:
+    enabled: false
+  anthropic:
+    enabled: false
 
 search:
   cron: "0 0 2 ? * MON"
-
-serper:
-  api-url: https://google.serper.dev/search
-  api-key: f417df99afefcd2e3693ef92eeee3c6a0a12bcf5

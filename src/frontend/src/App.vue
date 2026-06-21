@@ -27,6 +27,10 @@
           <el-icon><Search /></el-icon>
           <span>搜索管理</span>
         </el-menu-item>
+        <el-menu-item index="/seeds">
+          <el-icon><Star /></el-icon>
+          <span>种子库</span>
+        </el-menu-item>
         <el-menu-item index="/changes">
           <el-icon><Document /></el-icon>
           <span>变更日志</span>

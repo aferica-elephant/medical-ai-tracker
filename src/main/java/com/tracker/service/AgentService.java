@@ -167,12 +167,23 @@ public class AgentService {
             stats.setLastUpdateTime(latest.getUpdatedAt().toString());
         }
 
-        // 获取最近10条变更记录
+        // 获取最近10条变更记录，转为Map列表供前端展示
         List<AgentChangeLog> recentLogs = changeLogMapper.selectList(
                 new LambdaQueryWrapper<AgentChangeLog>()
                         .orderByDesc(AgentChangeLog::getCreatedAt)
                         .last("LIMIT 10"));
-        stats.setRecentChanges(new ArrayList<>());
+        List<Map<String, Object>> recentChangesList = recentLogs.stream().map(log -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", log.getId());
+            map.put("agentId", log.getAgentId());
+            map.put("changeType", log.getChangeType());
+            map.put("fieldName", log.getFieldName());
+            map.put("oldValue", log.getOldValue());
+            map.put("newValue", log.getNewValue());
+            map.put("createdAt", log.getCreatedAt() != null ? log.getCreatedAt().toString() : "");
+            return map;
+        }).collect(Collectors.toList());
+        stats.setRecentChanges(recentChangesList);
 
         return stats;
     }
@@ -180,9 +191,11 @@ public class AgentService {
     /**
      * 保存或更新智能体数据（从AI提取的数据）
      *
-     * 去重逻辑：根据"名称+公司名"判断是否已存在
-     * - 已存在：更新字段（description、techFeatures、website、category、targetUser），记录变更日志
+     * 去重逻辑：仅根据"名称"判断是否已存在（名称一致视为同一产品）
+     * - 已存在：更新字段（description、techFeatures、website、category、targetUser等），记录变更日志
      * - 不存在：创建新记录，记录新增日志
+     *
+     * 并发安全：通过数据库唯一键(name)保证去重，insert冲突时转为update
      *
      * @param agentData AI 提取的智能体数据，包含 name、company、website、description、category、targetUser 等字段
      * @return true=新增，false=更新；名称为空时返回false
@@ -197,10 +210,9 @@ public class AgentService {
             return false;
         }
 
-        // 按"名称+公司名"查询是否已存在
+        // 按"名称"查询是否已存在（名称一致视为同一产品，避免重复）
         MedicalAiAgent existing = agentMapper.selectOne(new LambdaQueryWrapper<MedicalAiAgent>()
                 .eq(MedicalAiAgent::getName, name)
-                .eq(MedicalAiAgent::getCompany, company)
                 .last("LIMIT 1"));
 
         if (existing != null) {
@@ -219,10 +231,28 @@ public class AgentService {
             agent.setCategory((String) agentData.getOrDefault("category", ""));
             agent.setTargetUser((String) agentData.getOrDefault("targetUser", ""));
             agent.setTechFeatures((String) agentData.getOrDefault("techFeatures", ""));
+            agent.setDownloadCount((String) agentData.getOrDefault("downloadCount", ""));
+            agent.setAppRating((String) agentData.getOrDefault("appRating", ""));
+            agent.setAppRank((String) agentData.getOrDefault("appRank", ""));
             agent.setStatus("active");
             agent.setFirstFoundDate(LocalDate.now());      // 首次发现日期
             agent.setLastVerifiedDate(LocalDate.now());     // 最近验证日期
-            agentMapper.insert(agent);
+
+            try {
+                agentMapper.insert(agent);
+            } catch (org.springframework.dao.DuplicateKeyException e) {
+                // 并发场景：另一线程已插入同名产品，转为更新
+                log.warn("Concurrent insert detected for '{}', falling back to update", name);
+                MedicalAiAgent concurrent = agentMapper.selectOne(new LambdaQueryWrapper<MedicalAiAgent>()
+                        .eq(MedicalAiAgent::getName, name)
+                        .last("LIMIT 1"));
+                if (concurrent != null) {
+                    updateAgentFields(concurrent, agentData);
+                    concurrent.setLastVerifiedDate(LocalDate.now());
+                    agentMapper.updateById(concurrent);
+                }
+                return false;
+            }
 
             // 记录新增变更日志
             AgentChangeLog changeLog = new AgentChangeLog();
@@ -313,6 +343,21 @@ public class AgentService {
         // 更新面向用户
         if (StringUtils.hasText(newTargetUser) && !newTargetUser.equals(agent.getTargetUser())) {
             agent.setTargetUser(newTargetUser);
+        }
+        // 更新应用商店下载量
+        String newDownloadCount = (String) data.getOrDefault("downloadCount", "");
+        if (StringUtils.hasText(newDownloadCount) && !newDownloadCount.equals(agent.getDownloadCount())) {
+            agent.setDownloadCount(newDownloadCount);
+        }
+        // 更新应用商店评分
+        String newAppRating = (String) data.getOrDefault("appRating", "");
+        if (StringUtils.hasText(newAppRating) && !newAppRating.equals(agent.getAppRating())) {
+            agent.setAppRating(newAppRating);
+        }
+        // 更新应用商店排名
+        String newAppRank = (String) data.getOrDefault("appRank", "");
+        if (StringUtils.hasText(newAppRank) && !newAppRank.equals(agent.getAppRank())) {
+            agent.setAppRank(newAppRank);
         }
     }
 

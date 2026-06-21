@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * 系统核心流程：
  * 1. 定时/手动触发搜索任务
- * 2. 通过 Serper.dev 或 AI web_search 联网搜索医疗AI产品信息
- * 3. AI 大模型分析搜索结果，提取结构化产品数据
+ * 2. 通过 AgentScope ReActAgent 智能体联网搜索医疗AI产品信息
+ * 3. 智能体自主推理和调用工具，提取结构化产品数据
  * 4. 去重入库，生成 Top100 排行
  */
 @SpringBootApplication

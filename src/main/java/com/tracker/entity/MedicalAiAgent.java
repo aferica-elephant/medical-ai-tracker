@@ -45,6 +45,15 @@ public class MedicalAiAgent {
     /** 技术特征描述 */
     private String techFeatures;
 
+    /** 应用商店下载量（来自七麦数据等平台） */
+    private String downloadCount;
+
+    /** 应用商店评分（来自七麦数据等平台） */
+    private String appRating;
+
+    /** 应用商店排名（来自七麦数据等平台） */
+    private String appRank;
+
     /** 状态：active=活跃, offline=下线 */
     private String status;
 

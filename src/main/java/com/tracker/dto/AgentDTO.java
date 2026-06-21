@@ -26,6 +26,12 @@ public class AgentDTO {
     private String targetUser;
     /** 技术特征 */
     private String techFeatures;
+    /** 应用商店下载量 */
+    private String downloadCount;
+    /** 应用商店评分 */
+    private String appRating;
+    /** 应用商店排名 */
+    private String appRank;
     /** 状态（active/offline） */
     private String status;
     /** 首次发现日期（字符串格式） */

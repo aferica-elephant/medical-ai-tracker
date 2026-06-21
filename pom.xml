@@ -21,6 +21,7 @@
         <java.version>17</java.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <okhttp.version>4.12.0</okhttp.version>
+        <agentscope.version>1.0.4</agentscope.version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,33 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- AgentScope Java - 多智能体框架 -->
+        <dependency>
+            <groupId>io.agentscope</groupId>
+            <artifactId>agentscope</artifactId>
+            <version>${agentscope.version}</version>
+        </dependency>
+
+        <!-- AgentScope Spring Boot Starter -->
+        <dependency>
+            <groupId>io.agentscope</groupId>
+            <artifactId>agentscope-spring-boot-starter</artifactId>
+            <version>${agentscope.version}</version>
+        </dependency>
+
+        <!-- OpenAI Java SDK (AgentScope OpenAI Provider 依赖) -->
+        <dependency>
+            <groupId>com.openai</groupId>
+            <artifactId>openai-java</artifactId>
+            <version>4.28.0</version>
+        </dependency>
+
+        <!-- Reactor Core (AgentScope依赖) -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
 
         <!-- Test -->

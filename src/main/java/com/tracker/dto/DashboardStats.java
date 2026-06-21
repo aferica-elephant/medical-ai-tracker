@@ -21,6 +21,6 @@ public class DashboardStats {
     private Map<String, Integer> categoryDistribution;
     /** 最近更新时间 */
     private String lastUpdateTime;
-    /** 最近变更记录列表 */
-    private List<AgentDTO> recentChanges;
+    /** 最近变更记录列表（每条包含 agentId, changeType, fieldName, newValue, createdAt） */
+    private List<Map<String, Object>> recentChanges;
 }

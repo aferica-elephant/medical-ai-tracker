@@ -19,6 +19,20 @@ export default {
   triggerSearch: () => api.post('/search/trigger'),
   getSearchTasks: (params) => api.get('/search/tasks', { params }),
 
+  // Keywords
+  getKeywords: () => api.get('/keywords'),
+  createKeyword: (data) => api.post('/keywords', data),
+  updateKeyword: (id, data) => api.put(`/keywords/${id}`, data),
+  deleteKeyword: (id) => api.delete(`/keywords/${id}`),
+  toggleKeyword: (id) => api.patch(`/keywords/${id}/toggle`),
+
+  // Seeds
+  getSeeds: () => api.get('/seeds'),
+  createSeed: (data) => api.post('/seeds', data),
+  updateSeed: (id, data) => api.put(`/seeds/${id}`, data),
+  deleteSeed: (id) => api.delete(`/seeds/${id}`),
+  toggleSeed: (id) => api.patch(`/seeds/${id}/toggle`),
+
   // Changes
   getChanges: (params) => api.get('/changes', { params })
 }
